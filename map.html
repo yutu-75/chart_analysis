@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Awesome-pyecharts</title>
+            <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
+        <script type="text/javascript" src="https://assets.pyecharts.org/assets/bmap.min.js"></script>
+        <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=NbQaofPi6y8GnBkfd2cmr1RbhLytNhqj"></script>
+        <script type="text/javascript" src="https://api.map.baidu.com/getscript?v=2.0&ak=NbQaofPi6y8GnBkfd2cmr1RbhLytNhqj"></script>
+
+</head>
+<body>
+    <div id="4edba203e4c24bb0b20a63ce316632e5" class="chart-container" style="width:1200px; height:800px;"></div>
+    <script>
+        var chart_4edba203e4c24bb0b20a63ce316632e5 = echarts.init(
+            document.getElementById('4edba203e4c24bb0b20a63ce316632e5'), 'white', {renderer: 'canvas'});
+        var option_4edba203e4c24bb0b20a63ce316632e5 = {
+    "animation": true,
+    "animationThreshold": 2000,
+    "animationDuration": 1000,
+    "animationEasing": "cubicOut",
+    "animationDelay": 0,
+    "animationDurationUpdate": 300,
+    "animationEasingUpdate": "cubicOut",
+    "animationDelayUpdate": 0,
+    "color": [
+        "#c23531",
+        "#2f4554",
+        "#61a0a8",
+        "#d48265",
+        "#749f83",
+        "#ca8622",
+        "#bda29a",
+        "#6e7074",
+        "#546570",
+        "#c4ccd3",
+        "#f05b72",
+        "#ef5b9c",
+        "#f47920",
+        "#905a3d",
+        "#fab27b",
+        "#2a5caa",
+        "#444693",
+        "#726930",
+        "#b2d235",
+        "#6d8346",
+        "#ac6767",
+        "#1d953f",
+        "#6950a1",
+        "#918597"
+    ],
+    "series": [
+        {
+            "type": "lines",
+            "coordinateSystem": "bmap",
+            "zlevel": 2,
+            "progressive": 200,
+            "progressiveThreshold": 500,
+            "effect": {
+                "show": true,
+                "brushType": "stroke",
+                "scale": 2.5,
+                "period": 4
+            },
+            "symbol": [
+                "none",
+                "arrow"
+            ],
+            "polyline": true,
+            "large": false,
+            "largeThreshold": 2000,
+            "symbolSize": 12,
+            "data": {
+                "\u963f\u57ce": [
+                    126.58,
+                    45.32
+                ],
+                "\u963f\u514b\u82cf": [
+                    80.19,
+                    41.09
+                ],
+                "\u963f\u52d2\u6cf0": [
+                    88.12,
+                    47.5
+                ]
+            },
+            "lineStyle": {
+                "show": true,
+                "width": 0.5,
+                "opacity": 0.2,
+                "curveness": 0,
+                "type": "solid"
+            },
+            "label": {
+                "show": true,
+                "position": "top",
+                "margin": 8
+            }
+        }
+    ],
+    "legend": [
+        {
+            "data": [
+                ""
+            ],
+            "selected": {
+                "": true
+            },
+            "show": true,
+            "padding": 5,
+            "itemGap": 10,
+            "itemWidth": 25,
+            "itemHeight": 14
+        }
+    ],
+    "tooltip": {
+        "show": true,
+        "trigger": "item",
+        "triggerOn": "mousemove|click",
+        "axisPointer": {
+            "type": "line"
+        },
+        "showContent": true,
+        "alwaysShowContent": false,
+        "showDelay": 0,
+        "hideDelay": 100,
+        "textStyle": {
+            "fontSize": 14
+        },
+        "borderWidth": 0,
+        "padding": 5
+    },
+    "title": [
+        {
+            "padding": 5,
+            "itemGap": 10
+        }
+    ],
+    "bmap": {
+        "center": [
+            116.4,
+            40.04
+        ],
+        "zoom": 10,
+        "roam": true,
+        "mapStyle": {
+            "styleJson": [
+                {
+                    "featureType": "water",
+                    "elementType": "all",
+                    "stylers": {
+                        "color": "#031628"
+                    }
+                },
+                {
+                    "featureType": "land",
+                    "elementType": "geometry",
+                    "stylers": {
+                        "color": "#000102"
+                    }
+                },
+                {
+                    "featureType": "highway",
+                    "elementType": "all",
+                    "stylers": {
+                        "visibility": "off"
+                    }
+                },
+                {
+                    "featureType": "arterial",
+                    "elementType": "geometry.fill",
+                    "stylers": {
+                        "color": "#000000"
+                    }
+                },
+                {
+                    "featureType": "arterial",
+                    "elementType": "geometry.stroke",
+                    "stylers": {
+                        "color": "#0b3d51"
+                    }
+                },
+                {
+                    "featureType": "local",
+                    "elementType": "geometry",
+                    "stylers": {
+                        "color": "#000000"
+                    }
+                },
+                {
+                    "featureType": "railway",
+                    "elementType": "geometry.fill",
+                    "stylers": {
+                        "color": "#000000"
+                    }
+                },
+                {
+                    "featureType": "railway",
+                    "elementType": "geometry.stroke",
+                    "stylers": {
+                        "color": "#08304b"
+                    }
+                },
+                {
+                    "featureType": "subway",
+                    "elementType": "geometry",
+                    "stylers": {
+                        "lightness": -70
+                    }
+                },
+                {
+                    "featureType": "building",
+                    "elementType": "geometry.fill",
+                    "stylers": {
+                        "color": "#000000"
+                    }
+                },
+                {
+                    "featureType": "all",
+                    "elementType": "labels.text.fill",
+                    "stylers": {
+                        "color": "#857f7f"
+                    }
+                },
+                {
+                    "featureType": "all",
+                    "elementType": "labels.text.stroke",
+                    "stylers": {
+                        "color": "#000000"
+                    }
+                },
+                {
+                    "featureType": "building",
+                    "elementType": "geometry",
+                    "stylers": {
+                        "color": "#022338"
+                    }
+                },
+                {
+                    "featureType": "green",
+                    "elementType": "geometry",
+                    "stylers": {
+                        "color": "#062032"
+                    }
+                },
+                {
+                    "featureType": "boundary",
+                    "elementType": "all",
+                    "stylers": {
+                        "color": "#465b6c"
+                    }
+                },
+                {
+                    "featureType": "manmade",
+                    "elementType": "all",
+                    "stylers": {
+                        "color": "#022338"
+                    }
+                },
+                {
+                    "featureType": "label",
+                    "elementType": "all",
+                    "stylers": {
+                        "visibility": "off"
+                    }
+                }
+            ]
+        }
+    }
+};
+        chart_4edba203e4c24bb0b20a63ce316632e5.setOption(option_4edba203e4c24bb0b20a63ce316632e5);
+            var bmap = chart_4edba203e4c24bb0b20a63ce316632e5.getModel().getComponent('bmap').getBMap();
+    </script>
+</body>
+</html>

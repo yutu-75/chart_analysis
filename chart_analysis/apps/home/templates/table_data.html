@@ -1,0 +1,296 @@
+{% extends "index.html" %}
+{% load static %}
+
+
+{% block content %}
+    <div id="app">
+        <div class="page-wrapper">
+
+            <!-- ============================================================== -->
+            <!-- Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <div class="page-breadcrumb">
+                <div class="row">
+                    <div class="col-7 align-self-center">
+                        <h4 class="page-title text-truncate text-dark font-weight-medium mb-1">数据库表数据</h4>
+                        <div class="d-flex align-items-center">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb m-0 p-0">
+                                    <li class="breadcrumb-item"><a href="index.html" class="text-muted">首页</a></li>
+                                    {% verbatim %}
+                                    <li class="breadcrumb-item text-muted active"
+                                        aria-current="page">{{ value }}
+                                    </li>
+                                    {% endverbatim %}
+
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="col-5 align-self-center">
+
+                        <div class="customize-input float-right">
+                            <span>数据库表选择:</span>
+
+                            <template>
+                                <el-select v-model="value" filterable placeholder="请选择" @change="change_v">
+                                    <el-option
+
+                                            v-for="item in options"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </template>
+
+
+                            {#                        <select class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius">#}
+                            {##}
+                            {#                            {% for t_name in tables %}#}
+                            {##}
+                            {#                                <option value="{{ forloop.counter0 }}" @click="t_select">{{ t_name }}</option>#}
+                            {##}
+                            {##}
+                            {#                            {% endfor %}#}
+                            {##}
+                            {#                        </select>#}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- Container fluid  -->
+            <!-- ============================================================== -->
+            <div class="container-fluid">
+                <!-- ============================================================== -->
+                <!-- Start Page Content -->
+                <!-- ============================================================== -->
+                <!-- basic table -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <h4 class="card-title">配置</h4>
+                                <h6 class="card-subtitle">零配置
+                                    默认情况下，DataTables 的大多数功能都是启用的，因此要将它与您自己的表一起使用，您只需调用构造函数： <code>
+                                        $().DataTable();</code>。您可以从这里参考完整的文档
+                                    数据表.
+                                    <a href="https://datatables.net/">Datatables</a></h6>
+
+
+                                <template>
+                                    <el-table
+                                            :data="tableData"
+                                            height="600"
+                                            border
+                                            style="width: 100%">
+
+                                        <el-table-column
+                                                v-for="(item,index) in tables_name"
+                                                :key="item"
+                                                :prop='index+""'
+                                                :label='item'
+                                                width="180">
+
+                                        </el-table-column>
+
+
+
+{#                                        {% for name in tables_name %}#}
+{##}
+{#                                            <el-table-column#}
+{#                                                    prop={{ forloop.counter0 }}#}
+{#                                                            label="{{ name }}"#}
+{#                                                    width="180">#}
+{#                                            </el-table-column>#}
+{##}
+{#                                        {% endfor %}#}
+
+                                    </el-table>
+                                </template>
+                                <div style="margin-top: 20px">
+                                    <el-pagination
+                                            background
+                                            @size-change="handleSizeChange"
+                                            @current-change="handleCurrentChange"
+                                            :current-page="currentPage4"
+                                            :page-sizes="[100, 200, 300, 400]"
+                                            :page-size="100"
+                                            layout="total, sizes, prev, pager, next, jumper"
+                                            :total='count_t'
+                                    >
+                                    </el-pagination>
+
+                                </div>
+                                {% verbatim %}
+
+                                -----
+                                {{ message }}
+                                -----
+                                {% endverbatim %}
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- order table -->
+
+            <!-- ============================================================== -->
+            <!-- End PAge Content -->
+            <!-- ============================================================== -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Container fluid  -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- footer -->
+        <!-- ============================================================== -->
+        <footer class="footer text-center text-muted">
+
+        </footer>
+        <!-- ============================================================== -->
+        <!-- End footer -->
+        <!-- ============================================================== -->
+        {#</div>#}
+    </div>
+
+
+    {#    <div><img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.alicdn.com%2Fi4%2F4253473560%2FO1CN01Eldtum1cAWTbCxvbN_%21%214253473560.jpg_375x375.jpg&refer=http%3A%2F%2Fimg.alicdn.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1628395278&t=3f0df4bc68d90a57b1107d8017e64371" alt=""></div>#}
+{% endblock %}
+
+
+
+{% block js %}
+
+    <!-- 引入样式 -->
+
+    <!-- 引入组件库 -->
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue-router@2.0.0/dist/vue-router.js"></script>
+    {#    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>#}
+
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script>
+        const BASE_URL = 'http://192.168.3.62:8000'; //定义全局接口地址
+
+        var vm = new Vue({
+            el: "#app",		//圈地,划分vue的控制区域
+            data() {
+                return {
+                    options: [
+                        {% for t_name in tables %}
+                            {
+                                value: '{{t_name}}',
+                                label: '{{t_name}}',
+                            },
+                        {% endfor %}
+
+                    ],
+                    value: '{{ tables.0 }}',
+                    message: 'hello Vue!',
+                    currentPage4: 1,
+                    tableData:{{ tables_data|safe }},
+                    tables_name:{{ tables_name|safe }},          // 表头字段列表
+
+                    val_sum: 100,
+                    p_number: 100,
+                    count_t: {{ count_t }},
+                }
+            },
+
+            methods: {
+                change_v() {
+                    axios.defaults.headers.post['X-CSRFToken'] = '{{ csrf_token }}'
+                    axios.post(BASE_URL+'/datatable/', {
+                        f_number: 1,
+                        p_number: this.p_number,
+                        t_name: this.value
+                    })
+                        .then((res) => {
+
+                            this.tableData = res.data.tables_data;
+                            this.count_t = res.data.count_t;
+                            this.tables_name = res.data.tables_name
+                            {#alert(this.count_t)#}
+
+                        })
+                    .catch((err)=>{
+                        console.log(err)
+
+                    })
+
+                },
+
+
+                handleSizeChange(val) {
+                    {#console.log(`每页 ${val} 条`);#}
+                    this.p_number = val;
+                },
+                handleCurrentChange(val) {
+
+                    axios.defaults.headers.post['X-CSRFToken'] = '{{ csrf_token }}'
+
+                    axios.post(BASE_URL+'/datatable/', {
+                        f_number: val,
+                        p_number: this.p_number,
+                        t_name: this.value,
+
+                    })
+                        .then((res) => {
+
+                            this.tableData = res.data.tables_data;
+
+
+                        })
+
+                    {#console.log(`当前页: ${val}`);#}
+                }
+            },
+
+        })
+    </script>
+
+    <style scoped>
+        .el-input__inner:hover {
+        {#box-shadow: 0px 0px 3px gray;#}
+
+        }
+
+        .el-input__inner {
+
+            border-radius: 45px !important;
+            border-color: white;
+            box-shadow: 0px 0px 10px #F3F3F3FF;
+
+        }
+
+        .el-select .el-input.is-focus .el-input__inner {
+            border-color: white;
+        }
+
+        .el-select .el-input__inner:hover {
+            border-color: white;
+        }
+
+        .el-input .el-input--suffix:hover {
+            border-color: white;
+        }
+
+        .el-input__inner:hover {
+            border-color: white
+        }
+
+        .el-select .el-input__inner:focus {
+            border-color: white;
+        }
+    </style>
+{% endblock %}

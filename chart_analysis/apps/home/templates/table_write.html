@@ -1,0 +1,900 @@
+{% extends "index.html" %}
+{% load static %}
+
+
+{% block content %}
+
+
+    <div id="app">
+        <div class="page-wrapper">
+
+            <!-- ============================================================== -->
+            <!-- Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <div class="page-breadcrumb">
+                <div class="row">
+                    <div class="col-7 align-self-center">
+                        <h4 class="page-title text-truncate text-dark font-weight-medium mb-1">数据库表数据</h4>
+                        <div class="d-flex align-items-center">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb m-0 p-0">
+                                    <li class="breadcrumb-item"><a href="/" class="text-muted">首页</a></li>
+                                    {% verbatim %}
+                                    <li class="breadcrumb-item text-muted active"
+                                        aria-current="page">{{ value }}
+                                    </li>
+                                    {% endverbatim %}
+
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="col-5 align-self-center">
+
+                        <div class="customize-input float-right">
+                            <span>数据库表选择:</span>
+
+                            <template>
+                                <el-select v-model="value" filterable placeholder="请选择" @change="change_v">
+                                    <el-option
+
+                                            v-for="item in options"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </template>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-breadcrumb">
+                <div class="row">
+                    <div class="col-3 align-self-center">
+                        <div class="customize-input float-right">
+                            <span>请选择分类轴表字段,即(x轴):</span>
+                            <template>
+                                <el-select v-model="value_p" filterable placeholder="请选择" @change="change_p">
+                                    <el-option
+
+                                            v-for="item in field_p"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </template>
+                        </div>
+
+                    </div>
+                    <div class="col-3 align-self-center">
+                        <div class="customize-input float-right">
+
+                            <div class="block">
+                                <span class="demonstration">请选择图例字段及其计量方法:</span>
+                                <el-cascader
+                                        filterable
+                                        v-model="legend_v"
+                                        :options="legend"
+                                        :props="props"
+                                        collapse-tags
+
+                                        @change="change_l"
+                                        clearable></el-cascader>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-3 align-self-center">
+                        <div class="customize-input float-right">
+                            <el-dialog
+                                    title="提示"
+                                    :visible.sync="dialogVisible"
+                                    width="30%"
+                            >
+                                <div style="text-align: center">
+                                    <span class="demonstration">请重新选择图例字段及其计量方法:</span>
+                                    <el-cascader
+                                            filterable
+                                            v-model="two_charts"
+                                            :options="two_charts_data"
+                                            :props="props"
+                                            collapse-tags
+                                            @change="change_l"
+                                            clearable></el-cascader>
+                                </div>
+
+                            </el-dialog>
+                            <el-dialog
+                                    title="提示"
+                                    :visible.sync="dialogVisible1"
+                                    width="30%"
+                            >
+                                <span>
+                                    <el-input
+                                            placeholder="请输入完成率! 例: 39.00"
+                                            v-model="completion_rate"
+                                            clearable>
+                                    </el-input>
+                                </span>
+
+                            </el-dialog>
+                            <span class="demonstration">请选择需要展示的可视化图形:</span>
+                            <template>
+                                <el-select v-model="chart_value" clearable filterable placeholder="请选择">
+                                    <el-option
+                                            filterable
+
+                                            v-for="item in chart_options"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value"
+                                            @click.native="chart_change"
+                                            collapse-tags
+                                    >
+                                    </el-option>
+                                </el-select>
+                            </template>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-3 align-self-center">
+                        <div class="customize-input float-right">
+
+                            <button type="button" class="btn btn-outline-secondary btn-rounded" @click="show_chart"><i
+                                    class="fas fa-check"></i>
+                                提交
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <div class="container-fluid">
+
+                <div class="row">
+                    <div class="col-lg-8">
+
+                        <div class="card">
+                            <div class="card-body">
+
+
+                                <div id="bar" style="width:100%; height:600px;"></div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card" v-show="cy_show">
+                            <div class="card-body">
+
+
+                                <h4 class="card-title">词云配置项</h4>
+                                <h6 class="card-subtitle">如果有输入文本,会优先展示输入的词云,若不需要则清空文本!</h6>
+                                <h6 class="card-subtitle">输入完文本记得去提交鸭！</h6>
+                                <h5>词云输入文本:</h5>
+                                <el-input
+                                        type="textarea"
+                                        :rows="2"
+                                        placeholder="请输入内容"
+                                        v-model="textarea">
+                                </el-input>
+                                <div style="margin-top: 20px">
+                                    <h6 class="card-subtitle">若需要更丰富的词云功能-> <a href="http://119.3.204.138:8080/"
+                                                                               target="_blank"><code>点我鸭！</code></a></code>
+                                        .</h6>
+
+                                </div>
+
+                                <h6 style="margin-top: 20px;">词云字体:</h6>
+
+
+                                <template>
+                                    <el-select v-model="font_value" filterable placeholder="请选择">
+                                        <el-option
+                                                v-for="item in font2_family"
+                                                :key="item.value"
+                                                :label="item.label"
+                                                :value="item.value">
+                                        </el-option>
+                                    </el-select>
+                                </template>
+                                <h6 style="margin-top: 20px;">词云形状模板:</h6>
+
+
+                                <template>
+                                    <el-select v-model="ciyun_value" filterable placeholder="请选择">
+                                        <el-option
+                                                v-for="item in ciyun_options"
+                                                :key="item.value"
+                                                :label="item.label"
+                                                :value="item.value">
+                                        </el-option>
+                                    </el-select>
+                                </template>
+
+
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+
+
+                                <h4 class="card-title">可视化配置项</h4>
+                                <h6 class="card-subtitle">To use add class <code>.bg-success .text-white</code> in the
+                                    <code>&lt;thead&gt;</code>.</h6>
+                                <h5>主题配置</h5>
+                                <template>
+                                    <el-select v-model="theme" filterable placeholder="请选择">
+                                        <el-option
+                                                v-for="item in ops_theme"
+                                                :key="item.value"
+                                                :label="item.label"
+                                                :value="item.value">
+                                        </el-option>
+                                    </el-select>
+                                </template>
+
+                                <h6 style="margin-top: 20px;">是否排序:</h6>
+
+
+                                <template>
+                                    <el-select v-model="sort_value" filterable placeholder="请选择">
+                                        <el-option
+                                                v-for="item in ops_sort"
+                                                :key="item.value"
+                                                :label="item.label"
+                                                :value="item.value">
+                                        </el-option>
+                                    </el-select>
+                                </template>
+
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+{% endblock %}
+
+
+
+{% block js %}
+
+    <!-- 引入样式 -->
+
+    <!-- 引入组件库 -->
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue-router@2.0.0/dist/vue-router.js"></script>
+    {#    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>#}
+
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    {#     <script src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>#}
+    <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
+    <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts-wordcloud.min.js"></script>
+
+
+    <script src="{% static 'theme/chalk.js' %}"></script>
+    <script src="{% static 'theme/essos.js' %}"></script>
+    <script src="{% static 'theme/infographic.js' %}"></script>
+    <script src="{% static 'theme/macarons.js' %}"></script>
+    <script src="{% static 'theme/purple-passion.js' %}"></script>
+    <script src="{% static 'theme/roma.js' %}"></script>
+    <script src="{% static 'theme/shine.js' %}"></script>
+    <script src="{% static 'theme/vintage.js' %}"></script>
+    <script src="{% static 'theme/walden.js' %}"></script>
+    <script src="{% static 'theme/westeros.js' %}"></script>
+    <script src="{% static 'theme/wonderland.js' %}"></script>
+
+
+
+    <script>
+
+
+        const BASE_URL = 'http://192.168.3.62:8000'; //定义全局接口地址
+        var vm = new Vue({
+            el: "#app",		//圈地,划分vue的控制区域
+            data() {
+                return {
+                    ciyun_value: '',          // v-model的值 词云形状
+                    ciyun_options: [{              // v-model的值 词云形状
+                        value: '1.png',
+                        label: '猫'
+                    }, {
+                        value: '2.png',
+                        label: '骨头 '
+                    }, {
+                        value: '3.png',
+                        label: '蜗牛'
+                    }, {
+                        value: '4.png',
+                        label: '兔兔'
+                    }, {
+                        value: '5.png',
+                        label: '鱼'
+                    }, {
+                        value: '6.png',
+                        label: '飞鹰'
+                    }, {
+                        value: '7.png',
+                        label: '猫爪印'
+                    }, {
+                        value: '8.png',
+                        label: '奖杯'
+                    }, {
+                        value: '9.png',
+                        label: '幸运草'
+                    }, {
+                        value: '10.png',
+                        label: '蝴蝶'
+                    }, {
+                        value: '11.png',
+                        label: '迪士尼公主'
+                    }, {
+                        value: '12.png',
+                        label: '雨伞'
+                    }, {
+                        value: '13.png',
+                        label: '飞机'
+                    }, {
+                        value: '14.png',
+                        label: '大树'
+                    }, {
+                        value: '15.png',
+                        label: '帆船'
+                    }, {
+                        value: '16.png',
+                        label: '玫瑰花'
+                    }, {
+                        value: '17.png',
+                        label: '枫叶'
+                    }, {
+                        value: '18.png',
+                        label: '男人'
+                    }, {
+                        value: '19.png',
+                        label: '女人'
+                    },
+                        {
+                        value: '21.png',
+                        label: '小车'
+                    },{
+                        value: '108.png',
+                        label: '小车'
+                    },
+
+
+                    ],
+                    font_value: '',         // v-model的值 词云字体
+                    font_family: ['SimSun', 'KaiTi'],        // 字体列表
+                    font2_family: [{
+                        value: 'Microsoft YaHei',
+                        label: '微软雅黑'
+                    }, {
+                        value: 'SimSun',
+                        label: '宋体 '
+                    }, {
+                        value: 'KaiTi',
+                        label: '楷体'
+                    }, {
+                        value: 'FangSong',
+                        label: '仿宋'
+                    }, {
+                        value: 'STHupo',
+                        label: '华文琥珀'
+                    }, {
+                        value: 'STLiti',
+                        label: '华文隶书'
+                    }, {
+                        value: 'LiSu',
+                        label: '隶书'
+                    }, {
+                        value: 'YouYuan',
+                        label: '幼圆'
+                    }, {
+                        value: 'STXinwei',
+                        label: '华文新魏'
+                    }, {
+                        value: 'STXingkai',
+                        label: '华文行楷'
+                    },
+
+                    ],
+                    textarea: '',          //  词云文本
+                    cy_show: true,          // 词云配置项显示
+                    two_charts: '',
+                    chart_value: '19',     // 可视化图形的选择
+                    chart_options: [{
+                        value: '1',
+                        label: '柱状图'
+                    }, {
+                        value: '2',
+                        label: '堆积柱状图'
+                    }, {
+                        value: '3',
+                        label: '百分比堆积柱状图'
+                    }, {
+                        value: '4',
+                        label: '条形图'
+                    }, {
+                        value: '5',
+                        label: '堆积条形图'
+                    }, {
+                        value: '6',
+                        label: '百分比堆积条形图'
+                    }, {
+                        value: '7',
+                        label: '普通折线图'
+                    }, {
+                        value: '8',
+                        label: '堆积折线图'
+                    }, {
+                        value: '9',
+                        label: '百分比堆积折线图'
+                    }, {
+                        value: '10',
+                        label: '饼图'
+                    }, {
+                        value: '11',
+                        label: '环图'
+                    }, {
+                        value: '12',
+                        label: '复合饼图'
+                    }, {
+                        value: '13',
+                        label: '复合条饼图'
+                    }, {
+                        value: '14',
+                        label: '双轴图',
+                    }, {
+                        value: '15',
+                        label: '面积图'
+                    }, {
+                        value: '16',
+                        label: '堆积面积图'
+                    }, {
+                        value: '17',
+                        label: '百分比堆积面积图'
+                    }, {
+                        value: '18',
+                        label: '散点图'
+                    }, {
+                        value: '19',
+                        label: '词云'
+                    }, {
+                        value: '20',
+                        label: '雷达图'
+                    }, {
+                        value: '21',
+                        label: '指标卡'
+                    }, {
+                        value: '22',
+                        label: '漏斗图'
+                    }, {
+                        value: '23',
+                        label: '计量图'
+                    }, {
+                        value: '24',
+                        label: '箱线图'
+                    }, {
+                        value: '25',
+                        label: '数据地图'
+                    }, {
+                        value: '26',
+                        label: 'GIS地图'
+                    }, {
+                        value: '27',
+                        label: '瀑布图'
+                    }, {
+                        value: '28',
+                        label: 'GIS地图'
+                    }, {
+                        value: '29',
+                        label: '旭日图'
+                    }, {
+                        value: '30',
+
+                        label: '直方图'
+                    }, {
+                        value: '31',
+                        label: '帕累托图'
+                    }, {
+                        value: '32',
+                        label: '桑基图'
+                    }, {
+                        value: '33',
+                        label: '弦图'
+                    }, {
+                        value: '34',
+                        label: '矩形树图'
+                    }, {
+                        value: '35',
+                        label: '甘特图'
+                    }
+
+                    ],
+
+                    sort_value: 0,
+                    ops_sort: [{
+                        value: 0,
+                        label: '不排序'
+                    }, {
+                        value: 1,
+                        label: '从小到大'
+                    }, {
+                        value: 2,
+                        label: '从大到小'
+                    },
+                    ],
+
+                    // element ui 主题配置
+                    theme: 'light',
+                    ops_theme: [{
+                        value: 'light',
+                        label: 'light'
+                    }, {
+                        value: 'dark',
+                        label: 'dark'
+                    }, {
+                        value: 'white',
+                        label: 'white'
+                    }, {
+                        value: 'chalk',
+                        label: 'chalk'
+                    }, {
+                        value: 'essos',
+                        label: 'essos'
+                    }, {
+                        value: 'infographic',
+                        label: 'infographic'
+                    }, {
+                        value: 'macarons',
+                        label: 'macarons'
+                    }, {
+                        value: 'purple-passion',
+                        label: 'purple-passion'
+                    }, {
+                        value: 'roma',
+                        label: 'roma'
+                    }, {
+                        value: 'shine',
+                        label: 'shine'
+                    }, {
+                        value: 'vintage',
+                        label: 'vintage'
+                    }, {
+                        value: 'walden',
+                        label: 'walden'
+                    }, {
+                        value: 'westeros',
+                        label: 'westeros'
+                    }, {
+                        value: 'wonderland',
+                        label: 'wonderland'
+                    }
+                    ],
+
+
+                    legend_v: [['过去一年读课外书量', 2], ['过去一年读课外书量', 3]],
+                    legend: [
+                        {% for k,v in tables_name.items %}
+                            {
+                                value: '{{k}}',
+                                label: '{{k}}',
+                                children: [
+                                    {value: 1, label: '求和',},
+
+                                    {value: 2, label: '求均值'},
+                                    {value: 3, label: '求最大值'},
+                                    {value: 4, label: '求最小值'},
+                                    {value: 5, label: '数值列求和'},
+                                ]
+                            },
+                        {% endfor %}
+                    ],
+
+
+                    props: {expandTrigger: 'hover', multiple: true},
+                    options: [
+                        {% for t_name in tables %}
+                            {
+                                value: '{{t_name}}',
+                                label: '{{t_name}}',
+                            },
+                        {% endfor %}
+
+                    ],
+                    field_p: [
+                        {% for k,v in tables_name.items  %}
+                            {
+                                value: '{{k}}',
+                                label: '{{k}}',
+                            },
+                        {% endfor %}
+
+                    ],
+                    value: '{{ tables.0 }}',            // 选择的表名
+                    value_p: '省',
+                    message: 'hello Vue!',
+                    currentPage4: 1,
+                    tableData:{{ tables_data|safe }},
+                    tables_name:{{ tables_name|safe }},          // 表头字段列表
+                    val_sum: 100,
+                    p_number: 100,
+                    count_t: {{ count_t }},
+                    tables_name_dict: {{tables_name|safe}},
+                    dialogVisible: false,
+                    dialogVisible1: false,
+                    completion_rate: "",                         // 完成率
+                    two_charts_data: '',
+
+                }
+            },
+
+            methods: {
+
+
+                chart_change() {
+                    {#alert(this.chart_value)#}
+
+                    if (this.chart_value === '14') {
+                        this.two_charts_data = this.legend;
+                        for (var i = 0; i < this.two_charts_data.length; i++) {
+                            for (var j = 0; j < this.two_charts_data[i]['children'].length; j++) {
+                                console.log(this.two_charts_data[i]['children'][j])
+                                this.two_charts_data[i]['children'][j]['children'] = [
+                                    {value: 1, label: '柱状图例'},
+                                    {value: 2, label: '折线图例'},
+
+                                ]
+                            }
+                        }
+                        this.dialogVisible = true
+                    }
+                    this.cy_show = this.chart_value === '19';
+                    if (this.chart_value === '23') {
+                        this.dialogVisible1 = true
+                        {#alert('qwq')#}
+                    }
+
+                },
+                // 显示图表
+                show_chart() {
+                    if (this.chart_value !== '14') {
+                        this.two_charts = '';
+                    }
+
+                    {#http://192.168.3.56:8000/show_chart/?t_name=ky_table_yd11&legend_v=分类ID：1,2,3,2-分类ID：1,2,3,3-分类ID：1,2,3,4&legend_x=分类名：一级,二级,三级#}
+                    axios.defaults.headers.post['X-CSRFToken'] = '{{ csrf_token }}'
+                    axios.post(BASE_URL + '/show_chart/', {
+                        t_name: this.value,
+                        legend_v: this.legend_v,
+                        //legend_v:[['过去一年读课外书量', 2], ['过去一年读课外书量', 3]],
+                        legend_x: this.value_p,
+                        //legend_x: '省',
+                        chart_value: this.chart_value,
+                        sort_value: this.sort_value,
+                        two_charts: this.two_charts,
+                        font_value: this.font_value,
+                        ciyun_value: this.ciyun_value,
+                        ciyun_txt: this.textarea,
+                        completion_rate:this.completion_rate,
+
+
+                    })
+                        .then((res) => {
+                            if (this.chart_value === '19') {
+
+                                echarts.init(document.getElementById('bar')).dispose();             // 销毁上一个实例
+                                console.log(res.data);
+                                let chart = echarts.init(document.getElementById('bar'), this.theme, {renderer: 'canvas'});
+                                var maskImage = new Image();
+                                res.data.series[0]['maskImage'] = new Image();
+                                console.log(res.data.series[0]['maskImage']);
+                                res.data.series[0]['maskImage'].src = '/static/ciyun_templates/' + this.ciyun_value
+                                chart.setOption(res.data);
+                            } else {
+                                if (this.chart_value === '23') {
+
+                                    echarts.init(document.getElementById('bar')).dispose();             // 销毁上一个实例
+                                    let chart = echarts.init(document.getElementById('bar'), this.theme, {renderer: 'canvas'});
+                                    chart.setOption(res.data);
+
+                                } else {
+                                    if (res.data.series[0].label.formatter === "function(x){return Number(x.data * 100).toFixed() + '%';}") {
+                                        for (i in res.data.series) {
+                                            res.data.series[i].label.formatter = function (x) {
+                                                return Number(x.data * 100).toFixed() + '%';
+                                            }
+                                            console.log(typeof res.data.series[i].label.formatter)
+                                        }
+                                    }
+                                    if (res.data.series[0].label.formatter === "function(x){return Number(x.data[1] * 100).toFixed() + '%';}") {
+                                        for (i in res.data.series) {
+                                            res.data.series[i].label.formatter = function (x) {
+                                                return Number(x.data[1] * 100).toFixed() + '%';
+                                            }
+                                            console.log(typeof res.data.series[i].label.formatter)
+                                        }
+                                    }
+                                    echarts.init(document.getElementById('bar')).dispose();             // 销毁上一个实例
+                                    let chart = echarts.init(document.getElementById('bar'), this.theme, {renderer: 'canvas'});
+                                    chart.setOption(res.data);
+                                }
+                            }
+
+
+                        })
+                        .catch((error) => {
+                            {#console.log(error)#}
+                            {#console.log(error.response.data)#}
+                            this.$message({
+                                message: '选项没有选择完呢！ 亲~' + error.response.data,
+                                type: 'warning'
+                            });
+                        })
+
+                },
+                change_l() {
+
+                    {#alert(this.legend_v.join('-'))#}
+                    console.log(this.legend_v)
+                    for (i in this.legend_v) {
+                        console.log(i[0])
+                    }
+                },
+
+                change_p() {
+
+                },
+
+                change_v() {
+                    //  数据库表选择下拉 触发的事件
+
+                    axios.defaults.headers.post['X-CSRFToken'] = '{{ csrf_token }}'
+                    axios.post(BASE_URL + '/chart_table/', {
+                        f_number: 1,
+                        p_number: this.p_number,
+                        t_name: this.value
+
+
+                    })
+                        .then((res) => {
+
+                            {#console.log(this.tableData)#}
+
+                            {#this.tableData ='';#}
+                            this.tableData = res.data.tables_data;
+                            this.count_t = res.data.count_t;
+                            this.tables_name = res.data.tables_name
+                            this.tables_name_dict = res.data.tables_name
+
+                            // 把数据转换成 element ui 可以渲染的数据格式
+                            var cars = new Array();
+                            var cars1 = new Array();
+                            let key_s = 0
+                            for (var key in this.tables_name) {
+                                cars[key_s] = {
+                                    value: key,
+                                    label: key,
+                                };
+
+                                cars1[key_s] = {
+                                    value: key,
+                                    label: key,
+                                    children: [
+                                        {value: 1, label: '求和'},
+                                        {value: 2, label: '求均值'},
+                                        {value: 3, label: '求最大值'},
+                                        {value: 4, label: '求最小值'}
+                                    ]
+                                };
+
+                                key_s++
+
+                            }
+
+
+                            this.field_p = cars;
+                            this.legend = cars1;
+                            this.value_p = res.data.tables_name[0];
+
+
+                        })
+                        .catch((res) => {
+
+                        })
+
+                },
+
+
+                handleSizeChange(val) {
+                    {#console.log(`每页 ${val} 条`);#}
+                    this.p_number = val;
+                },
+                handleCurrentChange(val) {
+                    {#alert(this.p_number)#}
+                    axios.defaults.headers.post['X-CSRFToken'] = '{{ csrf_token }}'
+
+                    axios.post(BASE_URL + '/chart_table/', {
+                        f_number: val,
+                        p_number: this.p_number,
+                        t_name: this.value,
+
+                    })
+                        .then((res) => {
+                            {#console.log(this.tableData)#}
+                            {#console.log(res.data)#}
+                            {#alert(res.data.tables_data)#}
+                            {#this.tableData ='';#}
+                            this.tableData = res.data.tables_data;
+
+                            {#this.count_t = res.data.count_t;#}
+                            {# console.log(res.data.tables_data)#}
+
+                        })
+                        .catch((res) => {
+
+                        })
+
+                    {#console.log(`当前页: ${val}`);#}
+                }
+            },
+
+        })
+    </script>
+
+    <style scoped>
+        .el-input__inner:hover {
+        {#box-shadow: 0px 0px 3px gray;#}
+
+        }
+
+        .el-input__inner {
+
+            border-radius: 45px !important;
+            border-color: white;
+            box-shadow: 0px 0px 10px #F3F3F3FF;
+
+        }
+
+        .el-select .el-input.is-focus .el-input__inner {
+            border-color: white;
+        }
+
+        .el-select .el-input__inner:hover {
+            border-color: white;
+        }
+
+        .el-input .el-input--suffix:hover {
+            border-color: white;
+        }
+
+        .el-input__inner:hover {
+            border-color: white
+        }
+
+        .el-select .el-input__inner:focus {
+            border-color: white;
+        }
+    </style>
+{% endblock %}
