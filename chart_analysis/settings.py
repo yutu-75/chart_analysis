@@ -167,6 +167,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+# 静态收集目录，项目的根目录下
+STATIC_ROOT = Path(BASE_DIR, 'statics')
+
 STATIC_URL = '/static/'
 STATIC_URL_TEMPLATE = Path(BASE_DIR, r"chart_analysis\apps\home\static\ciyun_templates")
 STATICFILES_DIRS = [
