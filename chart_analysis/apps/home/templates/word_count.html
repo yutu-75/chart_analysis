@@ -146,7 +146,7 @@
                                     {% csrf_token %}
                                     <i class="el-icon-upload"></i>
                                     <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                                    <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+                                    <div class="el-upload__tip" slot="tip">       </div>
                                 </el-upload>
 
                                 <p class="font_p" @click="clearFiles">清空上传文件列表</p>
@@ -254,7 +254,7 @@
     <script>
 
 
-        const BASE_URL = 'http://192.168.3.62:8000'; //定义全局接口地址
+        const BASE_URL = 'http://49.4.31.249:80'; //定义全局接口地址
         {#const BASE_URL = 'http://127.0.0.1:8000'; //定义全局接口地址#}
         var vm = new Vue({
             el: "#app",		//圈地,划分vue的控制区域

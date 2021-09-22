@@ -29,7 +29,7 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 SECRET_KEY = 'django-insecure-c6@g!(hj@_=+h@=fj(cupq)%iq6lhq!xb+*ojkyhnxwae0vfru'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -44,9 +44,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'home',
+    'rest_framework',
+    'corsheaders',
+    'api',
 ]
 
 MIDDLEWARE = [
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -54,7 +58,37 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_CREDENTIALS = True  # 指明在跨域访问中，后端是否支持对cookie的操作
+
+CORS_ALLOW_METHODS = (
+         'DELETE',
+          'GET',
+           'OPTIONS',
+            'PATCH',
+             'POST',
+              'PUT',
+               'VIEW',
+               )
+CORS_ALLOW_HEADERS = (
+         'XMLHttpRequest',
+          'X_FILENAME',
+           'accept-encoding',
+            'authorization',
+             'content-type',
+              'dnt',
+               'origin',
+                'user-agent',
+                 'x-csrftoken',
+                  'x-requested-with',
+                   'Pragma',
+                   )
+
+
 # X_FRAME_OPTIONS = 'SAMEORIGIN'
 ROOT_URLCONF = 'chart_analysis.urls'
 
@@ -83,7 +117,7 @@ WSGI_APPLICATION = 'chart_analysis.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        "HOST": '127.0.0.1',
+        "HOST": '49.4.31.249',
         "PORT": 3306,
         "USER": 'root',
         'PASSWORD': "123456",
@@ -91,7 +125,7 @@ DATABASES = {
     },
     'analysis1': {
         'ENGINE': 'django.db.backends.mysql',
-        "HOST": '127.0.0.1',
+        "HOST": '49.4.31.249',
         "PORT": 3306,
         "USER": 'root',
         'PASSWORD': "123456",
@@ -120,7 +154,16 @@ DATABASES = {
         "USER": 'root',
         'PASSWORD': "@WSX1qaz",
         'NAME': 'dw_listen_js_ym',
+    },
+    'gpjz': {
+        'ENGINE': 'django.db.backends.mysql',
+        "HOST": '49.4.21.142',
+        "PORT": 3306,
+        "USER": 'root',
+        'PASSWORD': "CDEW%uJikg987Hl",
+        'NAME': 'gpjz',
     }
+
 
 }
 
@@ -168,13 +211,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 # 静态收集目录，项目的根目录下
-STATIC_ROOT = Path(BASE_DIR, 'statics')
+STATIC_ROOT = Path(BASE_DIR, 'static')
 
 STATIC_URL = '/static/'
 STATIC_URL_TEMPLATE = Path(BASE_DIR, r"chart_analysis\apps\home\static\ciyun_templates")
-STATICFILES_DIRS = [
-    Path(BASE_DIR, "static")
-]
+# STATICFILES_DIRS = [
+#    Path(BASE_DIR, "static")
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

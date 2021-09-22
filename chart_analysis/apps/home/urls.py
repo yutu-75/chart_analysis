@@ -27,6 +27,8 @@ urlpatterns = [
     path("show_chart/", views.show_chart),
     path('word_count/', views.word_count),
     path("choice_database/", views.choice_database),
+#    path("api/word_count/", views.WordCountView.as_view()),
+#    path("api/downloads/", views.Downloads.as_view()),
 
     # re_path(r'datatable/<int:f_sum>/', views.datatable,),
 ]
